@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Training & Nutrition Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4ef; color: #1a1a18; min-height: 100vh; padding: 2rem 1rem; }
+  .wrap { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 1.5rem; color: #1a1a18; }
+
+  .tab-bar { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 7px 14px; font-size: 13px; font-weight: 500; border: 0.5px solid #aaa; border-radius: 8px; cursor: pointer; color: #555; background: #fff; transition: all 0.15s; }
+  .tab.active { background: #1a1a18; color: #fff; border-color: #1a1a18; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .section-title { font-size: 16px; font-weight: 500; color: #1a1a18; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid #e0dfd8; }
+
+  /* Training */
+  .day-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+  .day-card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .day-card:hover { border-color: #999; }
+  .day-card.selected { border: 1.5px solid #2563eb; }
+  .day-label { font-size: 10px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .day-name { font-size: 14px; font-weight: 500; color: #1a1a18; margin-bottom: 4px; }
+  .day-tag { font-size: 10px; padding: 2px 7px; border-radius: 20px; display: inline-block; }
+  .tag-upper { background: #dbeafe; color: #1e40af; }
+  .tag-lower { background: #dcfce7; color: #166534; }
+  .tag-push { background: #fee2e2; color: #991b1b; }
+  .tag-pull { background: #fef9c3; color: #854d0e; }
+  .tag-legs { background: #dcfce7; color: #166534; }
+  .tag-rest { background: #f3f2ec; color: #888; }
+  .ex-panel { background: #f9f8f4; border-radius: 12px; padding: 1rem; display: none; }
+  .ex-panel.active { display: block; }
+  .ex-title { font-size: 14px; font-weight: 500; color: #1a1a18; margin-bottom: 10px; }
+  .ex-table { width: 100%; font-size: 12px; border-collapse: collapse; table-layout: fixed; }
+  .ex-table th { text-align: left; color: #777; font-weight: 500; padding: 3px 0 7px; border-bottom: 0.5px solid #e0dfd8; }
+  .ex-table th:nth-child(1) { width: 44%; }
+  .ex-table th:nth-child(2) { width: 22%; }
+  .ex-table th:nth-child(3) { width: 34%; }
+  .ex-table td { padding: 6px 4px 6px 0; border-bottom: 0.5px solid #e0dfd8; color: #1a1a18; vertical-align: top; }
+  .ex-table tr:last-child td { border-bottom: none; }
+  .sets-badge { background: #fff; border: 0.5px solid #ccc; border-radius: 4px; padding: 2px 5px; font-size: 11px; color: #555; white-space: nowrap; }
+  .note-text { font-size: 11px; color: #777; }
+
+  /* Nutrition */
+  .macro-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 1rem; }
+  .macro-card { background: #f3f2ec; border-radius: 8px; padding: 12px 8px; text-align: center; }
+  .macro-num { font-size: 20px; font-weight: 500; color: #1a1a18; }
+  .macro-label { font-size: 11px; color: #777; margin-top: 2px; }
+  .activity-note { background: #fffbeb; border-left: 3px solid #d97706; border-radius: 0 8px 8px 0; padding: 9px 12px; margin-bottom: 1rem; font-size: 12px; color: #92400e; line-height: 1.6; }
+  .meal-card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+  .meal-header { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .meal-header:hover { background: #f9f8f4; }
+  .meal-time { font-size: 11px; color: #aaa; }
+  .meal-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-top: 1px; }
+  .meal-kcal { font-size: 12px; color: #777; white-space: nowrap; }
+  .chevron { font-size: 11px; color: #aaa; transition: transform 0.2s; margin-left: 8px; }
+  .chevron.open { transform: rotate(180deg); }
+  .meal-body { border-top: 0.5px solid #e0dfd8; padding: 12px 14px; display: none; }
+  .meal-body.open { display: block; }
+  .swap-tabs { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+  .swap-tab { padding: 4px 10px; font-size: 11px; font-weight: 500; border: 0.5px solid #ccc; border-radius: 20px; cursor: pointer; color: #555; background: #fff; transition: all 0.15s; }
+  .swap-tab.active { background: #1a1a18; color: #fff; border-color: #1a1a18; }
+  .swap-panel { display: none; }
+  .swap-panel.active { display: block; }
+  .food-row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 0.5px solid #e0dfd8; font-size: 12px; color: #1a1a18; }
+  .food-row:last-child { border-bottom: none; }
+  .food-macro { font-size: 11px; color: #777; white-space: nowrap; margin-left: 8px; }
+  .tip { background: #eff6ff; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: 8px 11px; margin-top: 10px; font-size: 11px; color: #1e40af; line-height: 1.6; }
+  .high-day { background: #fffbeb; border-left: 3px solid #d97706; border-radius: 0 8px 8px 0; padding: 8px 11px; margin-top: 6px; font-size: 11px; color: #92400e; line-height: 1.6; }
+
+  /* Supplements */
+  .supp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .supp-card { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 12px; }
+  .supp-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 3px; }
+  .supp-dose { font-size: 11px; color: #2563eb; margin-bottom: 5px; }
+  .supp-why { font-size: 11px; color: #555; line-height: 1.5; }
+  .priority-badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; display: inline-block; margin-bottom: 5px; }
+  .p-essential { background: #fee2e2; color: #991b1b; }
+  .p-recommended { background: #dbeafe; color: #1e40af; }
+  .p-optional { background: #f3f2ec; color: #666; }
+  .supp-note { background: #eff6ff; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: 9px 12px; margin-top: 1rem; font-size: 12px; color: #1e40af; line-height: 1.6; }
+
+  /* Lift tracker */
+  .tracker-form-card { background: #f9f8f4; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; }
+  .form-label { font-size: 11px; font-weight: 500; color: #777; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-group { margin-bottom: 12px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .tracker-input { padding: 8px 12px; font-size: 13px; border: 0.5px solid #ddd; border-radius: 8px; color: #1a1a18; background: #fff; outline: none; width: 100%; }
+  .tracker-input:focus { border-color: #2563eb; }
+  .tracker-input::placeholder { color: #bbb; }
+  .set-header { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 6px; font-size: 11px; color: #999; font-weight: 500; margin-bottom: 4px; padding: 0 2px; }
+  .tracker-row-inputs { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .tracker-row-inputs input { padding: 7px 10px; font-size: 13px; border: 0.5px solid #ddd; border-radius: 8px; color: #1a1a18; background: #fff; outline: none; width: 100%; }
+  .tracker-row-inputs input:focus { border-color: #2563eb; }
+  .tracker-row-inputs input::placeholder { color: #bbb; }
+  .btn-add-set { padding: 7px 10px; font-size: 12px; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #555; cursor: pointer; white-space: nowrap; }
+  .btn-add-set:hover { background: #f0efe8; }
+  .btn-remove { padding: 5px 8px; font-size: 13px; border: 0.5px solid #ddd; border-radius: 6px; background: #fff; color: #aaa; cursor: pointer; line-height: 1; }
+  .btn-remove:hover { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .btn-primary { padding: 9px 18px; font-size: 13px; font-weight: 500; border: none; border-radius: 8px; background: #1a1a18; color: #fff; cursor: pointer; }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary { padding: 9px 14px; font-size: 13px; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #777; cursor: pointer; }
+  .btn-secondary:hover { background: #f9f8f4; }
+  .form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .log-list { margin-top: 0; }
+  .log-entry { background: #f9f8f4; border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 0.5px solid #e0dfd8; }
+  .log-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .log-meta { display: flex; flex-direction: column; gap: 2px; }
+  .log-date { font-size: 11px; color: #999; }
+  .log-session { font-size: 14px; font-weight: 500; color: #1a1a18; }
+  .log-table { width: 100%; font-size: 12px; border-collapse: collapse; table-layout: fixed; }
+  .log-table th { text-align: left; color: #777; font-weight: 500; padding: 3px 0 6px; border-bottom: 0.5px solid #e0dfd8; }
+  .log-table th:nth-child(1) { width: 45%; }
+  .log-table th:nth-child(2) { width: 18%; }
+  .log-table th:nth-child(3) { width: 18%; }
+  .log-table th:nth-child(4) { width: 19%; }
+  .log-table td { padding: 5px 0; border-bottom: 0.5px solid #e0dfd8; color: #1a1a18; vertical-align: middle; }
+  .log-table tr:last-child td { border-bottom: none; }
+  .pr-badge { font-size: 10px; background: #fef9c3; color: #854d0e; border-radius: 4px; padding: 1px 5px; margin-left: 4px; font-weight: 500; }
+  .btn-delete-log { padding: 4px 8px; font-size: 11px; border: 0.5px solid #ddd; border-radius: 6px; background: #fff; color: #aaa; cursor: pointer; }
+  .btn-delete-log:hover { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: #bbb; font-size: 13px; border: 0.5px dashed #ddd; border-radius: 12px; }
+  .log-section-title { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 10px; margin-top: 1.5rem; padding-bottom: 6px; border-bottom: 0.5px solid #e0dfd8; display: flex; justify-content: space-between; align-items: center; }
+  .log-count { font-size: 11px; color: #999; font-weight: 400; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Complete training and nutrition plan</h1>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="showPanel('training', this)">Training split</button>
+    <button class="tab" onclick="showPanel('nutrition', this)">Meal plan</button>
+    <button class="tab" onclick="showPanel('supplements', this)">Supplements</button>
+    <button class="tab" onclick="showPanel('tracker', this)">Lift tracker</button>
+  </div>
+
+  <!-- ===== TRAINING ===== -->
+  <div class="panel active" id="panel-training">
+    <div class="section-title">Weekly training split — Upper / Lower / Push / Pull / Legs</div>
+    <div class="day-grid">
+      <div class="day-card selected" onclick="selectDay(this,'ex-upper')">
+        <div class="day-label">Monday</div>
+        <div class="day-name">Upper (heavy)</div>
+        <span class="day-tag tag-upper">Compounds / low rep</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-lower')">
+        <div class="day-label">Tuesday</div>
+        <div class="day-name">Lower (heavy)</div>
+        <span class="day-tag tag-lower">Squat / hinge</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-push')">
+        <div class="day-label">Wednesday</div>
+        <div class="day-name">Push (volume)</div>
+        <span class="day-tag tag-push">Chest / Shoulders / Tri</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-pull')">
+        <div class="day-label">Thursday</div>
+        <div class="day-name">Pull (volume)</div>
+        <span class="day-tag tag-pull">Back / Biceps</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-legs')">
+        <div class="day-label">Friday</div>
+        <div class="day-name">Legs (volume)</div>
+        <span class="day-tag tag-legs">Quad / Ham / Glute</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-rest1')">
+        <div class="day-label">Saturday</div>
+        <div class="day-name">Rest</div>
+        <span class="day-tag tag-rest">Active recovery</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-rest2')">
+        <div class="day-label">Sunday</div>
+        <div class="day-name">Rest</div>
+        <span class="day-tag tag-rest">Full rest / meal prep</span>
+      </div>
+    </div>
+
+    <div id="ex-upper" class="ex-panel active">
+      <div class="ex-title">Monday — Upper body (heavy, 4–6 rep focus)</div>
+      <table class="ex-table">
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
+        <tr><td>Barbell flat bench press</td><td><span class="sets-badge">4 × 4–6</span></td><td class="note-text">Main compound, progressive overload priority</td></tr>
+        <tr><td>Barbell row (Pendlay)</td><td><span class="sets-badge">4 × 4–6</span></td><td class="note-text">Chest to bar, controlled eccentric</td></tr>
+        <tr><td>Standing barbell OHP</td><td><span class="sets-badge">3 × 5–7</span></td><td class="note-text">Strict form, no leg drive</td></tr>
+        <tr><td>Weighted pull-ups</td><td><span class="sets-badge">3 × 5–7</span></td><td class="note-text">Add weight if 7+ reps feel easy</td></tr>
+        <tr><td>Incline dumbbell press</td><td><span class="sets-badge">3 × 6–8</span></td><td class="note-text">Upper chest, controlled descent</td></tr>
+        <tr><td>Face pull</td><td><span class="sets-badge">3 × 15</span></td><td class="note-text">Shoulder health, rear delt</td></tr>
+      </table>
+    </div>
+    <div id="ex-lower" class="ex-panel">
+      <div class="ex-title">Tuesday — Lower body (heavy, 4–6 rep focus)</div>
+      <table class="ex-table">
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
+        <tr><td>Barbell back squat</td><td><span class="sets-badge">4 × 4–6</span></td><td class="note-text">King of lower body, full depth</td></tr>
+        <tr><td>Romanian deadlift</td><td><span class="sets-badge">4 × 5–7</span></td><td class="note-text">Hamstring stretch, neutral spine</td></tr>
+        <tr><td>Leg press</td><td><span class="sets-badge">3 × 6–8</span></td><td class="note-text">Feet close and low, quad emphasis</td></tr>
+        <tr><td>Walking lunges</td><td><span class="sets-badge">3 × 8/leg</span></td><td class="note-text">Glute and quad, keep torso upright</td></tr>
+        <tr><td>Leg curl (seated)</td><td><span class="sets-badge">3 × 8–10</span></td><td class="note-text">Peak contraction hold</td></tr>
+        <tr><td>Standing calf raise</td><td><span class="sets-badge">4 × 12–15</span></td><td class="note-text">Full ROM, pause at bottom</td></tr>
+      </table>
+    </div>
+    <div id="ex-push" class="ex-panel">
+      <div class="ex-title">Wednesday — Push (volume, 8–15 rep focus)</div>
+      <table class="ex-table">
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
+        <tr><td>Incline barbell press</td><td><span class="sets-badge">4 × 8–10</span></td><td class="note-text">Upper chest and anterior delt</td></tr>
+        <tr><td>Arnold press (seated)</td><td><span class="sets-badge">3 × 10–12</span></td><td class="note-text">Full shoulder engagement</td></tr>
+        <tr><td>Cable fly (low to high)</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Full stretch at bottom</td></tr>
+        <tr><td>Cable lateral raise</td><td><span class="sets-badge">4 × 15–20</span></td><td class="note-text">Constant tension, slow eccentric</td></tr>
+        <tr><td>Weighted dips</td><td><span class="sets-badge">3 × 10–12</span></td><td class="note-text">Lean forward for chest focus</td></tr>
+        <tr><td>Overhead tricep extension</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Long head stretch</td></tr>
+        <tr><td>Tricep pushdown (rope)</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Superset with above</td></tr>
+      </table>
+    </div>
+    <div id="ex-pull" class="ex-panel">
+      <div class="ex-title">Thursday — Pull (volume, 8–15 rep focus)</div>
+      <table class="ex-table">
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
+        <tr><td>Lat pulldown (underhand)</td><td><span class="sets-badge">4 × 10–12</span></td><td class="note-text">Full stretch at top, squeeze at bottom</td></tr>
+        <tr><td>Seated cable row (wide grip)</td><td><span class="sets-badge">4 × 10–12</span></td><td class="note-text">Retract scapula at peak</td></tr>
+        <tr><td>Single arm dumbbell row</td><td><span class="sets-badge">3 × 10–12</span></td><td class="note-text">Full stretch and contraction</td></tr>
+        <tr><td>Straight arm pulldown</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Lat isolation</td></tr>
+        <tr><td>Barbell shrug</td><td><span class="sets-badge">4 × 12–15</span></td><td class="note-text">Trap hypertrophy</td></tr>
+        <tr><td>Incline dumbbell curl</td><td><span class="sets-badge">3 × 10–12</span></td><td class="note-text">Long head stretch at bottom</td></tr>
+        <tr><td>Hammer curl</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Brachialis and brachioradialis</td></tr>
+      </table>
+    </div>
+    <div id="ex-legs" class="ex-panel">
+      <div class="ex-title">Friday — Legs (volume, 10–15 rep focus)</div>
+      <table class="ex-table">
+        <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
+        <tr><td>Hack squat</td><td><span class="sets-badge">4 × 10–12</span></td><td class="note-text">Deep ROM, no lockout at top</td></tr>
+        <tr><td>Leg press</td><td><span class="sets-badge">4 × 12–15</span></td><td class="note-text">Higher rep, pump focused</td></tr>
+        <tr><td>Bulgarian split squat</td><td><span class="sets-badge">3 × 10/leg</span></td><td class="note-text">Glute and quad, knee tracking</td></tr>
+        <tr><td>Leg extension</td><td><span class="sets-badge">3 × 15</span></td><td class="note-text">Quad isolation, peak hold</td></tr>
+        <tr><td>Seated leg curl</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Hamstring isolation</td></tr>
+        <tr><td>Seated calf raise</td><td><span class="sets-badge">4 × 15–20</span></td><td class="note-text">Soleus focus, full ROM</td></tr>
+      </table>
+    </div>
+    <div id="ex-rest1" class="ex-panel">
+      <div class="ex-title">Saturday — Active recovery</div>
+      <table class="ex-table">
+        <tr><th>Activity</th><th>Duration</th><th>Notes</th></tr>
+        <tr><td>Light walk or cycling</td><td><span class="sets-badge">20–30 min</span></td><td class="note-text">Low intensity, increases blood flow</td></tr>
+        <tr><td>Foam rolling</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Quads, lats, thoracic spine</td></tr>
+        <tr><td>Static stretching</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Hip flexors, hamstrings, chest</td></tr>
+      </table>
+      <div class="tip" style="margin-top:10px">Muscle is built during recovery, not training. Keep stress low and aim for 8+ hrs sleep.</div>
+    </div>
+    <div id="ex-rest2" class="ex-panel">
+      <div class="ex-title">Sunday — Full rest and meal prep</div>
+      <table class="ex-table">
+        <tr><th>Focus</th><th>Time</th><th>Notes</th></tr>
+        <tr><td>Sleep</td><td><span class="sets-badge">8–9 hrs</span></td><td class="note-text">Non-negotiable for GH release</td></tr>
+        <tr><td>Meal prep</td><td><span class="sets-badge">60–90 min</span></td><td class="note-text">Portion rice, cook proteins, prep containers</td></tr>
+        <tr><td>Gentle walk</td><td><span class="sets-badge">Optional</span></td><td class="note-text">Fresh air and mental reset</td></tr>
+      </table>
+      <div class="tip" style="margin-top:10px">Sunday meal prep is the single biggest habit you can build as a hardgainer to hit your calorie targets consistently all week.</div>
+    </div>
+  </div>
+
+  <!-- ===== NUTRITION ===== -->
+  <div class="panel" id="panel-nutrition">
+    <div class="section-title">Daily nutrition — 5 meals</div>
+    <div class="macro-grid">
+      <div class="macro-card"><div class="macro-num">3,100</div><div class="macro-label">Calories</div></div>
+      <div class="macro-card"><div class="macro-num">170g</div><div class="macro-label">Protein</div></div>
+      <div class="macro-card"><div class="macro-num">380g</div><div class="macro-label">Carbs</div></div>
+      <div class="macro-card"><div class="macro-num">85g</div><div class="macro-label">Fats</div></div>
+    </div>
+    <div class="activity-note">Mixed office and field work, ~5,000 steps/day. On heavier field days add 150–200 kcal — an extra tbsp peanut butter in your morning shake or a handful of nuts with Meal 3.</div>
+
+    <!-- MEAL 1 -->
+    <div class="meal-card">
+      <div class="meal-header" onclick="toggleMeal(this)">
+        <div><div class="meal-time">5:30–6:00 AM · Before work</div><div class="meal-name">Meal 1 — Morning (choose your option)</div></div>
+        <div style="display:flex;align-items:center"><span class="meal-kcal">~650 kcal</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="meal-body">
+        <div class="swap-tabs">
+          <button class="swap-tab active" onclick="swapTab(this,'m1','shake')">Mass shake</button>
+          <button class="swap-tab" onclick="swapTab(this,'m1','oats')">Overnight oats</button>
+        </div>
+        <div id="m1-shake" class="swap-panel active">
+          <div class="food-row"><span>2 scoops whey in 400ml whole milk</span><span class="food-macro">55g P / 24g C / 12g F</span></div>
+          <div class="food-row"><span>1 medium banana</span><span class="food-macro">1g P / 27g C / 0g F</span></div>
+          <div class="food-row"><span>3 tbsp oats blended in</span><span class="food-macro">4g P / 20g C / 3g F</span></div>
+          <div class="food-row"><span>1 tbsp peanut butter</span><span class="food-macro">4g P / 3g C / 8g F</span></div>
+          <div class="tip">Blend the night before and refrigerate. Shake before drinking. Under 2 mins to prepare on the morning.</div>
+          <div class="high-day">Heavy field day: add an extra tbsp peanut butter or a second banana (+90–100 kcal).</div>
+        </div>
+        <div id="m1-oats" class="swap-panel">
+          <div class="food-row"><span>100g oats</span><span class="food-macro">10g P / 66g C / 7g F</span></div>
+          <div class="food-row"><span>300ml whole milk</span><span class="food-macro">10g P / 14g C / 11g F</span></div>
+          <div class="food-row"><span>1 scoop whey stirred in</span><span class="food-macro">25g P / 3g C / 1g F</span></div>
+          <div class="food-row"><span>1 tbsp honey + mixed berries</span><span class="food-macro">0g P / 22g C / 0g F</span></div>
+          <div class="food-row"><span>1 tbsp chia seeds</span><span class="food-macro">2g P / 5g C / 4g F</span></div>
+          <div class="tip">Prep the night before — mix oats, milk and whey, refrigerate. Add honey and berries in the morning. Grab and go.</div>
+          <div class="high-day">Heavy field day: add an extra tbsp chia seeds and a drizzle of honey (+80 kcal).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEAL 2 -->
+    <div class="meal-card">
+      <div class="meal-header" onclick="toggleMeal(this)">
+        <div><div class="meal-time">10:30–11:00 AM · On site</div><div class="meal-name">Meal 2 — Work meal (choose your option)</div></div>
+        <div style="display:flex;align-items:center"><span class="meal-kcal">~700 kcal</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="meal-body">
+        <div class="swap-tabs">
+          <button class="swap-tab active" onclick="swapTab(this,'m2','chicken')">Chicken rice</button>
+          <button class="swap-tab" onclick="swapTab(this,'m2','mince')">Beef mince</button>
+          <button class="swap-tab" onclick="swapTab(this,'m2','mongolian')">Mongolian beef</button>
+        </div>
+        <div id="m2-chicken" class="swap-panel active">
+          <div class="food-row"><span>180g chicken breast (prepped)</span><span class="food-macro">50g P / 0g C / 5g F</span></div>
+          <div class="food-row"><span>200g cooked basmati rice</span><span class="food-macro">5g P / 52g C / 1g F</span></div>
+          <div class="food-row"><span>Broccoli, peppers, spinach</span><span class="food-macro">4g P / 12g C / 0g F</span></div>
+          <div class="food-row"><span>Soy sauce + garlic (seasoning)</span><span class="food-macro">1g P / 3g C / 0g F</span></div>
+          <div class="food-row"><span>1 tbsp olive oil</span><span class="food-macro">0g P / 0g C / 14g F</span></div>
+          <div class="high-day">Heavy field day: increase rice to 250g (+100 kcal).</div>
+        </div>
+        <div id="m2-mince" class="swap-panel">
+          <div class="food-row"><span>200g lean beef mince (5% fat)</span><span class="food-macro">46g P / 0g C / 10g F</span></div>
+          <div class="food-row"><span>200g cooked basmati rice</span><span class="food-macro">5g P / 52g C / 1g F</span></div>
+          <div class="food-row"><span>Mixed veg</span><span class="food-macro">4g P / 12g C / 0g F</span></div>
+          <div class="food-row"><span>Tomato passata + Italian herbs</span><span class="food-macro">2g P / 8g C / 0g F</span></div>
+          <div class="tip">Brown the mince with passata on Sunday and portion into containers. Reheat in 90 seconds.</div>
+          <div class="high-day">Heavy field day: increase rice to 250g (+100 kcal).</div>
+        </div>
+        <div id="m2-mongolian" class="swap-panel">
+          <div class="food-row"><span>180g beef strips (sirloin or rump)</span><span class="food-macro">44g P / 0g C / 9g F</span></div>
+          <div class="food-row"><span>200g cooked jasmine rice</span><span class="food-macro">5g P / 52g C / 1g F</span></div>
+          <div class="food-row"><span>Mongolian sauce (soy, brown sugar, ginger, garlic)</span><span class="food-macro">2g P / 18g C / 1g F</span></div>
+          <div class="food-row"><span>Spring onions, sesame seeds</span><span class="food-macro">1g P / 3g C / 2g F</span></div>
+          <div class="tip">Great for days when you need something to look forward to. Batch cook the sauce on Sunday.</div>
+          <div class="high-day">Heavy field day: increase rice to 250g (+100 kcal).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEAL 3 -->
+    <div class="meal-card">
+      <div class="meal-header" onclick="toggleMeal(this)">
+        <div><div class="meal-time">3:00–3:30 PM · After work</div><div class="meal-name">Meal 3 — Pre-training snack</div></div>
+        <div style="display:flex;align-items:center"><span class="meal-kcal">~380 kcal</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="meal-body">
+        <div class="food-row"><span>80g oats with 200ml whole milk</span><span class="food-macro">12g P / 60g C / 8g F</span></div>
+        <div class="food-row"><span>100g Greek yoghurt (full fat)</span><span class="food-macro">10g P / 5g C / 5g F</span></div>
+        <div class="food-row"><span>Handful mixed berries</span><span class="food-macro">1g P / 14g C / 0g F</span></div>
+        <div class="tip">A lighter snack to bridge the gap between work and dinner. Keeps energy steady without filling you up before your main meal at 5pm.</div>
+        <div class="high-day">Heavy field day: add a handful of mixed nuts (+150 kcal).</div>
+      </div>
+    </div>
+
+    <!-- MEAL 4 -->
+    <div class="meal-card">
+      <div class="meal-header" onclick="toggleMeal(this)">
+        <div><div class="meal-time">5:00–5:30 PM · Main meal before gym</div><div class="meal-name">Meal 4 — Main dinner (choose your option)</div></div>
+        <div style="display:flex;align-items:center"><span class="meal-kcal">~750 kcal</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="meal-body">
+        <div class="swap-tabs">
+          <button class="swap-tab active" onclick="swapTab(this,'m4','salmon')">Salmon</button>
+          <button class="swap-tab" onclick="swapTab(this,'m4','beef')">Beef</button>
+        </div>
+        <div id="m4-salmon" class="swap-panel active">
+          <div class="food-row"><span>200g salmon fillet</span><span class="food-macro">44g P / 0g C / 22g F</span></div>
+          <div class="food-row"><span>320g sweet potato (baked)</span><span class="food-macro">5g P / 58g C / 0g F</span></div>
+          <div class="food-row"><span>Large side salad / roasted veg</span><span class="food-macro">3g P / 12g C / 0g F</span></div>
+          <div class="food-row"><span>Drizzle of olive oil</span><span class="food-macro">0g P / 0g C / 7g F</span></div>
+          <div class="tip">Aim for salmon 3× per week for omega-3s. Eating at 5pm gives you a solid 90-minute gap before your 7pm session.</div>
+        </div>
+        <div id="m4-beef" class="swap-panel">
+          <div class="food-row"><span>250g lean beef mince or steak</span><span class="food-macro">57g P / 0g C / 14g F</span></div>
+          <div class="food-row"><span>320g sweet potato (baked)</span><span class="food-macro">5g P / 58g C / 0g F</span></div>
+          <div class="food-row"><span>Roasted veg (broccoli, courgette)</span><span class="food-macro">4g P / 10g C / 0g F</span></div>
+          <div class="food-row"><span>Drizzle of olive oil</span><span class="food-macro">0g P / 0g C / 7g F</span></div>
+          <div class="tip">Sweet potato is lighter on the stomach than pasta before a 7pm session. The 90-minute gap between this meal and training is the sweet spot.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEAL 5 -->
+    <div class="meal-card">
+      <div class="meal-header" onclick="toggleMeal(this)">
+        <div><div class="meal-time">~8:30 PM · Within 30 min of finishing training</div><div class="meal-name">Meal 5 — Post-workout shake</div></div>
+        <div style="display:flex;align-items:center"><span class="meal-kcal">~420 kcal</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="meal-body">
+        <div class="food-row"><span>2 scoops whey isolate in 300ml water</span><span class="food-macro">50g P / 4g C / 2g F</span></div>
+        <div class="food-row"><span>1 large banana</span><span class="food-macro">1g P / 32g C / 0g F</span></div>
+        <div class="food-row"><span>30g dextrose / simple carb powder</span><span class="food-macro">0g P / 30g C / 0g F</span></div>
+        <div class="food-row"><span>1 tbsp peanut butter (optional)</span><span class="food-macro">4g P / 3g C / 8g F</span></div>
+        <div class="tip">This is your final meal of the day. Isolate and simple carbs drive immediate recovery. The peanut butter adds slow-digesting fat and protein to sustain you overnight.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SUPPLEMENTS ===== -->
+  <div class="panel" id="panel-supplements">
+    <div class="section-title">Supplement stack</div>
+    <div class="supp-grid">
+      <div class="supp-card">
+        <span class="priority-badge p-essential">Essential</span>
+        <div class="supp-name">Whey protein (isolate)</div>
+        <div class="supp-dose">40–50g post-workout + as needed</div>
+        <div class="supp-why">Fastest way to hit protein targets without excess calories. Isolate preferred for absorption speed and digestive ease.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-essential">Essential</span>
+        <div class="supp-name">Creatine monohydrate</div>
+        <div class="supp-dose">5g daily, any time, with food</div>
+        <div class="supp-why">The most proven supplement for natural lifters. Increases strength, work capacity and muscle cell volume. Take every day regardless of whether you train.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-recommended">Recommended</span>
+        <div class="supp-name">Vitamin D3 + K2</div>
+        <div class="supp-dose">3,000–5,000 IU D3 + 100mcg K2 daily</div>
+        <div class="supp-why">Despite living in Australia, early starts and office time mean deficiency is common. Critical for testosterone production, bone health and immune function.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-recommended">Recommended</span>
+        <div class="supp-name">Magnesium glycinate</div>
+        <div class="supp-dose">400mg before bed</div>
+        <div class="supp-why">Improves sleep quality, reduces muscle cramps and supports testosterone. Deficiency is common in hard-training athletes. Glycinate form is easiest on the stomach.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-recommended">Recommended</span>
+        <div class="supp-name">Omega-3 fish oil</div>
+        <div class="supp-dose">2–3g EPA+DHA daily with meals</div>
+        <div class="supp-why">Reduces inflammation from heavy training, supports joint health and improves muscle protein synthesis signalling. Take with your main dinner meal.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-recommended">Recommended</span>
+        <div class="supp-name">Caffeine / pre-workout</div>
+        <div class="supp-dose">150–200mg, 30 min pre-session</div>
+        <div class="supp-why">Given your early starts, evening training can feel sluggish. Caffeine reliably improves strength output and focus. Plain caffeine tabs are cleaner than most pre-workouts.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-optional">Optional</span>
+        <div class="supp-name">Zinc (ZMA)</div>
+        <div class="supp-dose">30mg elemental zinc before bed</div>
+        <div class="supp-why">Supports testosterone and IGF-1 in hard-training athletes. Take away from food. Can be combined with magnesium as a ZMA formula.</div>
+      </div>
+      <div class="supp-card">
+        <span class="priority-badge p-optional">Optional</span>
+        <div class="supp-name">Digestive enzymes</div>
+        <div class="supp-dose">1 capsule with large meals</div>
+        <div class="supp-why">Eating high volume as a hardgainer can cause bloating. Enzymes aid digestion and absorption — worth trying if large meals leave you uncomfortable.</div>
+      </div>
+    </div>
+    <div class="supp-note">Priority order: creatine and protein first, then D3/K2 and magnesium, then the rest once nutrition is locked in. Don't buy commercial mass gainers — they are mostly sugar. Build your own from oats, whole milk, banana, whey and peanut butter for a fraction of the cost.</div>
+  </div>
+
+  <!-- ===== LIFT TRACKER ===== -->
+  <div class="panel" id="panel-tracker">
+    <div class="section-title">Lift tracker</div>
+
+    <div class="tracker-form-card">
+      <div class="form-row">
+        <div>
+          <label class="form-label">Session name</label>
+          <input class="tracker-input" type="text" id="session-name" placeholder="e.g. Upper heavy — Monday">
+        </div>
+        <div>
+          <label class="form-label">Date</label>
+          <input class="tracker-input" type="date" id="session-date">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Exercises &amp; sets</label>
+        <div class="set-header">
+          <span>Exercise</span><span>Weight (kg)</span><span>Reps</span><span></span>
+        </div>
+        <div id="set-rows">
+          <div class="tracker-row-inputs">
+            <input type="text" placeholder="e.g. Bench press">
+            <input type="number" placeholder="80" min="0">
+            <input type="number" placeholder="6" min="0">
+            <button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button>
+          </div>
+        </div>
+        <button class="btn-add-set" onclick="addRow()">+ Add exercise</button>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveSession()">Save session</button>
+        <button class="btn-secondary" onclick="clearForm()">Clear</button>
+      </div>
+      <div id="save-msg" style="font-size:12px;color:#166534;margin-top:8px;display:none;">Session saved.</div>
+    </div>
+
+    <div class="log-section-title">
+      <span>Session history</span>
+      <span class="log-count" id="log-count"></span>
+    </div>
+    <div class="log-list" id="log-list">
+      <div class="empty-state" id="empty-state">No sessions logged yet. Add your first session above.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'tracker') renderLog();
+}
+function selectDay(card, exId) {
+  document.querySelectorAll('.day-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.querySelectorAll('.ex-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(exId).classList.add('active');
+}
+function toggleMeal(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+function swapTab(btn, mealId, option) {
+  const parent = btn.closest('.meal-body');
+  parent.querySelectorAll('.swap-tab').forEach(t => t.classList.remove('active'));
+  parent.querySelectorAll('.swap-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(mealId + '-' + option).classList.add('active');
+}
+
+/* ---- Lift Tracker ---- */
+var sessions = JSON.parse(localStorage.getItem('liftSessions') || '[]');
+
+document.addEventListener('DOMContentLoaded', function() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('session-date').value = today;
+  renderLog();
+});
+
+function addRow() {
+  var row = document.createElement('div');
+  row.className = 'tracker-row-inputs';
+  row.innerHTML = '<input type="text" placeholder="e.g. Squat"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button>';
+  document.getElementById('set-rows').appendChild(row);
+}
+
+function removeRow(btn) {
+  var rows = document.querySelectorAll('#set-rows .tracker-row-inputs');
+  if (rows.length > 1) btn.closest('.tracker-row-inputs').remove();
+  else { btn.closest('.tracker-row-inputs').querySelectorAll('input').forEach(function(i){ i.value=''; }); }
+}
+
+function saveSession() {
+  var name = document.getElementById('session-name').value.trim() || 'Session';
+  var date = document.getElementById('session-date').value || new Date().toISOString().split('T')[0];
+  var rows = document.querySelectorAll('#set-rows .tracker-row-inputs');
+  var exercises = [];
+  rows.forEach(function(row) {
+    var inputs = row.querySelectorAll('input');
+    var ex = inputs[0].value.trim();
+    var kg = inputs[1].value.trim();
+    var reps = inputs[2].value.trim();
+    if (ex) exercises.push({ exercise: ex, weight: kg || '—', reps: reps || '—' });
+  });
+  if (!exercises.length) { alert('Please add at least one exercise.'); return; }
+  var session = { id: Date.now(), name: name, date: date, exercises: exercises };
+  sessions.unshift(session);
+  localStorage.setItem('liftSessions', JSON.stringify(sessions));
+  clearForm();
+  renderLog();
+  var msg = document.getElementById('save-msg');
+  msg.style.display = 'block';
+  setTimeout(function(){ msg.style.display = 'none'; }, 2500);
+}
+
+function clearForm() {
+  document.getElementById('session-name').value = '';
+  document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
+  var container = document.getElementById('set-rows');
+  container.innerHTML = '<div class="tracker-row-inputs"><input type="text" placeholder="e.g. Bench press"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button></div>';
+}
+
+function deleteSession(id) {
+  sessions = sessions.filter(function(s){ return s.id !== id; });
+  localStorage.setItem('liftSessions', JSON.stringify(sessions));
+  renderLog();
+}
+
+function getPR(exerciseName) {
+  var maxWeight = 0;
+  sessions.forEach(function(s) {
+    s.exercises.forEach(function(e) {
+      if (e.exercise.toLowerCase() === exerciseName.toLowerCase()) {
+        var w = parseFloat(e.weight);
+        if (!isNaN(w) && w > maxWeight) maxWeight = w;
+      }
+    });
+  });
+  return maxWeight;
+}
+
+function renderLog() {
+  var list = document.getElementById('log-list');
+  var empty = document.getElementById('empty-state');
+  var count = document.getElementById('log-count');
+  count.textContent = sessions.length ? sessions.length + ' session' + (sessions.length > 1 ? 's' : '') : '';
+  if (!sessions.length) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    return;
+  }
+  list.innerHTML = '';
+  sessions.forEach(function(s) {
+    var d = new Date(s.date + 'T12:00:00');
+    var dateStr = d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    var rows = s.exercises.map(function(e) {
+      var isPR = false;
+      var w = parseFloat(e.weight);
+      if (!isNaN(w) && w > 0) {
+        var pr = 0;
+        sessions.forEach(function(ss) {
+          if (ss.id === s.id) return;
+          ss.exercises.forEach(function(ex) {
+            if (ex.exercise.toLowerCase() === e.exercise.toLowerCase()) {
+              var ew = parseFloat(ex.weight);
+              if (!isNaN(ew) && ew > pr) pr = ew;
+            }
+          });
+        });
+        if (w > pr && pr >= 0) isPR = true;
+      }
+      return '<tr><td>' + e.exercise + (isPR ? '<span class="pr-badge">PR</span>' : '') + '</td><td>' + e.weight + ' kg</td><td>' + e.reps + ' reps</td></tr>';
+    }).join('');
+    var card = document.createElement('div');
+    card.className = 'log-entry';
+    card.innerHTML = '<div class="log-entry-header"><div class="log-meta"><div class="log-date">' + dateStr + '</div><div class="log-session">' + s.name + '</div></div><button class="btn-delete-log" onclick="deleteSession(' + s.id + ')">Delete</button></div><table class="log-table"><thead><tr><th>Exercise</th><th>Weight</th><th>Reps</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    list.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
