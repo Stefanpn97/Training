@@ -105,26 +105,27 @@
   .btn-secondary { padding: 9px 14px; font-size: 13px; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #777; cursor: pointer; }
   .btn-secondary:hover { background: #f9f8f4; }
   .form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .log-list { margin-top: 0; }
-  .log-entry { background: #f9f8f4; border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 0.5px solid #e0dfd8; }
-  .log-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .log-meta { display: flex; flex-direction: column; gap: 2px; }
-  .log-date { font-size: 11px; color: #999; }
-  .log-session { font-size: 14px; font-weight: 500; color: #1a1a18; }
-  .log-table { width: 100%; font-size: 12px; border-collapse: collapse; table-layout: fixed; }
-  .log-table th { text-align: left; color: #777; font-weight: 500; padding: 3px 0 6px; border-bottom: 0.5px solid #e0dfd8; }
-  .log-table th:nth-child(1) { width: 45%; }
-  .log-table th:nth-child(2) { width: 18%; }
-  .log-table th:nth-child(3) { width: 18%; }
-  .log-table th:nth-child(4) { width: 19%; }
-  .log-table td { padding: 5px 0; border-bottom: 0.5px solid #e0dfd8; color: #1a1a18; vertical-align: middle; }
-  .log-table tr:last-child td { border-bottom: none; }
-  .pr-badge { font-size: 10px; background: #fef9c3; color: #854d0e; border-radius: 4px; padding: 1px 5px; margin-left: 4px; font-weight: 500; }
-  .btn-delete-log { padding: 4px 8px; font-size: 11px; border: 0.5px solid #ddd; border-radius: 6px; background: #fff; color: #aaa; cursor: pointer; }
-  .btn-delete-log:hover { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
-  .empty-state { text-align: center; padding: 2.5rem 1rem; color: #bbb; font-size: 13px; border: 0.5px dashed #ddd; border-radius: 12px; }
-  .log-section-title { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 10px; margin-top: 1.5rem; padding-bottom: 6px; border-bottom: 0.5px solid #e0dfd8; display: flex; justify-content: space-between; align-items: center; }
-  .log-count { font-size: 11px; color: #999; font-weight: 400; }
+  /* Horizontal scroll rows */
+  .session-type-block { margin-bottom: 1.5rem; }
+  .session-type-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .session-type-label { font-size: 13px; font-weight: 500; color: #1a1a18; }
+  .session-type-tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-left: 7px; }
+  .session-count { font-size: 11px; color: #aaa; }
+  .scroll-track { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroll-track::-webkit-scrollbar { display: none; }
+  .session-card { min-width: 220px; max-width: 220px; background: #f9f8f4; border: 0.5px solid #e0dfd8; border-radius: 12px; padding: 12px; flex-shrink: 0; position: relative; }
+  .session-card-date { font-size: 11px; color: #999; margin-bottom: 3px; }
+  .session-card-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 10px; }
+  .sc-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+  .sc-table th { text-align: left; color: #aaa; font-weight: 500; padding: 2px 0 5px; border-bottom: 0.5px solid #e0dfd8; }
+  .sc-table td { padding: 4px 0; border-bottom: 0.5px solid #e0dfd8; color: #1a1a18; }
+  .sc-table tr:last-child td { border-bottom: none; }
+  .pr-badge { font-size: 9px; background: #fef9c3; color: #854d0e; border-radius: 3px; padding: 1px 4px; margin-left: 3px; font-weight: 500; }
+  .btn-delete-card { position: absolute; top: 10px; right: 10px; padding: 3px 7px; font-size: 11px; border: 0.5px solid #ddd; border-radius: 6px; background: #fff; color: #aaa; cursor: pointer; }
+  .btn-delete-card:hover { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .empty-state { text-align: center; padding: 2rem 1rem; color: #bbb; font-size: 12px; border: 0.5px dashed #ddd; border-radius: 10px; min-width: 180px; }
+  .no-sessions-msg { text-align: center; padding: 2.5rem 1rem; color: #bbb; font-size: 13px; border: 0.5px dashed #ddd; border-radius: 12px; margin-top: 1rem; }
+  .log-section-title { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 1rem; padding-bottom: 6px; border-bottom: 0.5px solid #e0dfd8; }
 
 </style>
 </head>
@@ -153,25 +154,25 @@
         <div class="day-name">Lower (heavy)</div>
         <span class="day-tag tag-lower">Squat / hinge</span>
       </div>
-      <div class="day-card" onclick="selectDay(this,'ex-push')">
+      <div class="day-card" onclick="selectDay(this,'ex-rest1')">
         <div class="day-label">Wednesday</div>
+        <div class="day-name">Rest</div>
+        <span class="day-tag tag-rest">Active recovery</span>
+      </div>
+      <div class="day-card" onclick="selectDay(this,'ex-push')">
+        <div class="day-label">Thursday</div>
         <div class="day-name">Push (volume)</div>
         <span class="day-tag tag-push">Chest / Shoulders / Tri</span>
       </div>
       <div class="day-card" onclick="selectDay(this,'ex-pull')">
-        <div class="day-label">Thursday</div>
+        <div class="day-label">Friday</div>
         <div class="day-name">Pull (volume)</div>
         <span class="day-tag tag-pull">Back / Biceps</span>
       </div>
       <div class="day-card" onclick="selectDay(this,'ex-legs')">
-        <div class="day-label">Friday</div>
+        <div class="day-label">Saturday</div>
         <div class="day-name">Legs (volume)</div>
         <span class="day-tag tag-legs">Quad / Ham / Glute</span>
-      </div>
-      <div class="day-card" onclick="selectDay(this,'ex-rest1')">
-        <div class="day-label">Saturday</div>
-        <div class="day-name">Rest</div>
-        <span class="day-tag tag-rest">Active recovery</span>
       </div>
       <div class="day-card" onclick="selectDay(this,'ex-rest2')">
         <div class="day-label">Sunday</div>
@@ -204,8 +205,18 @@
         <tr><td>Standing calf raise</td><td><span class="sets-badge">4 × 12–15</span></td><td class="note-text">Full ROM, pause at bottom</td></tr>
       </table>
     </div>
+    <div id="ex-rest1" class="ex-panel">
+      <div class="ex-title">Wednesday — Active recovery</div>
+      <table class="ex-table">
+        <tr><th>Activity</th><th>Duration</th><th>Notes</th></tr>
+        <tr><td>Light walk or cycling</td><td><span class="sets-badge">20–30 min</span></td><td class="note-text">Low intensity, increases blood flow</td></tr>
+        <tr><td>Foam rolling</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Quads, lats, thoracic spine</td></tr>
+        <tr><td>Static stretching</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Hip flexors, hamstrings, chest</td></tr>
+      </table>
+      <div class="tip" style="margin-top:10px">This sits after your two heaviest sessions of the week. Let your CNS recover fully — you go into Thursday's Push fresh and ready to push hard on volume work.</div>
+    </div>
     <div id="ex-push" class="ex-panel">
-      <div class="ex-title">Wednesday — Push (volume, 8–15 rep focus)</div>
+      <div class="ex-title">Thursday — Push (volume, 8–15 rep focus)</div>
       <table class="ex-table">
         <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
         <tr><td>Incline barbell press</td><td><span class="sets-badge">4 × 8–10</span></td><td class="note-text">Upper chest and anterior delt</td></tr>
@@ -218,7 +229,7 @@
       </table>
     </div>
     <div id="ex-pull" class="ex-panel">
-      <div class="ex-title">Thursday — Pull (volume, 8–15 rep focus)</div>
+      <div class="ex-title">Friday — Pull (volume, 8–15 rep focus)</div>
       <table class="ex-table">
         <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
         <tr><td>Lat pulldown (underhand)</td><td><span class="sets-badge">4 × 10–12</span></td><td class="note-text">Full stretch at top, squeeze at bottom</td></tr>
@@ -231,7 +242,7 @@
       </table>
     </div>
     <div id="ex-legs" class="ex-panel">
-      <div class="ex-title">Friday — Legs (volume, 10–15 rep focus)</div>
+      <div class="ex-title">Saturday — Legs (volume, 10–15 rep focus)</div>
       <table class="ex-table">
         <tr><th>Exercise</th><th>Sets × Reps</th><th>Notes</th></tr>
         <tr><td>Hack squat</td><td><span class="sets-badge">4 × 10–12</span></td><td class="note-text">Deep ROM, no lockout at top</td></tr>
@@ -241,16 +252,6 @@
         <tr><td>Seated leg curl</td><td><span class="sets-badge">3 × 12–15</span></td><td class="note-text">Hamstring isolation</td></tr>
         <tr><td>Seated calf raise</td><td><span class="sets-badge">4 × 15–20</span></td><td class="note-text">Soleus focus, full ROM</td></tr>
       </table>
-    </div>
-    <div id="ex-rest1" class="ex-panel">
-      <div class="ex-title">Saturday — Active recovery</div>
-      <table class="ex-table">
-        <tr><th>Activity</th><th>Duration</th><th>Notes</th></tr>
-        <tr><td>Light walk or cycling</td><td><span class="sets-badge">20–30 min</span></td><td class="note-text">Low intensity, increases blood flow</td></tr>
-        <tr><td>Foam rolling</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Quads, lats, thoracic spine</td></tr>
-        <tr><td>Static stretching</td><td><span class="sets-badge">10 min</span></td><td class="note-text">Hip flexors, hamstrings, chest</td></tr>
-      </table>
-      <div class="tip" style="margin-top:10px">Muscle is built during recovery, not training. Keep stress low and aim for 8+ hrs sleep.</div>
     </div>
     <div id="ex-rest2" class="ex-panel">
       <div class="ex-title">Sunday — Full rest and meal prep</div>
@@ -467,101 +468,100 @@
     <div class="tracker-form-card">
       <div class="form-row">
         <div>
-          <label class="form-label">Session name</label>
-          <input class="tracker-input" type="text" id="session-name" placeholder="e.g. Upper heavy — Monday">
+          <label class="form-label">Session type</label>
+          <select class="tracker-input" id="session-type">
+            <option value="Upper Heavy">Upper Heavy</option>
+            <option value="Lower Heavy">Lower Heavy</option>
+            <option value="Push">Push</option>
+            <option value="Pull">Pull</option>
+            <option value="Legs">Legs</option>
+          </select>
         </div>
         <div>
           <label class="form-label">Date</label>
           <input class="tracker-input" type="date" id="session-date">
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Exercises &amp; sets</label>
-        <div class="set-header">
-          <span>Exercise</span><span>Weight (kg)</span><span>Reps</span><span></span>
-        </div>
+        <div class="set-header"><span>Exercise</span><span>Weight (kg)</span><span>Reps</span><span></span></div>
         <div id="set-rows">
           <div class="tracker-row-inputs">
             <input type="text" placeholder="e.g. Bench press">
             <input type="number" placeholder="80" min="0">
             <input type="number" placeholder="6" min="0">
-            <button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button>
+            <button class="btn-remove" onclick="removeRow(this)">✕</button>
           </div>
         </div>
         <button class="btn-add-set" onclick="addRow()">+ Add exercise</button>
       </div>
-
       <div class="form-actions">
         <button class="btn-primary" onclick="saveSession()">Save session</button>
         <button class="btn-secondary" onclick="clearForm()">Clear</button>
       </div>
-      <div id="save-msg" style="font-size:12px;color:#166534;margin-top:8px;display:none;">Session saved.</div>
+      <div id="save-msg" style="font-size:12px;color:#166534;margin-top:8px;display:none;">Session saved ✓</div>
     </div>
 
-    <div class="log-section-title">
-      <span>Session history</span>
-      <span class="log-count" id="log-count"></span>
-    </div>
-    <div class="log-list" id="log-list">
-      <div class="empty-state" id="empty-state">No sessions logged yet. Add your first session above.</div>
-    </div>
+    <div class="log-section-title">Session history by type</div>
+    <div id="log-list"></div>
   </div>
 
 </div>
 
 <script>
+var SESSION_TYPES = ['Upper Heavy','Lower Heavy','Push','Pull','Legs'];
+var TYPE_TAGS = {
+  'Upper Heavy': { bg:'#dbeafe', color:'#1e40af' },
+  'Lower Heavy': { bg:'#dcfce7', color:'#166534' },
+  'Push':        { bg:'#fee2e2', color:'#991b1b' },
+  'Pull':        { bg:'#fef9c3', color:'#854d0e' },
+  'Legs':        { bg:'#dcfce7', color:'#166534' }
+};
+var sessions = JSON.parse(localStorage.getItem('liftSessions') || '[]');
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
+  renderLog();
+});
+
 function showPanel(id, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('panel-' + id).classList.add('active');
   btn.classList.add('active');
   if (id === 'tracker') renderLog();
 }
 function selectDay(card, exId) {
-  document.querySelectorAll('.day-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.day-card').forEach(function(c){ c.classList.remove('selected'); });
   card.classList.add('selected');
-  document.querySelectorAll('.ex-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ex-panel').forEach(function(p){ p.classList.remove('active'); });
   document.getElementById(exId).classList.add('active');
 }
 function toggleMeal(header) {
-  const body = header.nextElementSibling;
-  const chevron = header.querySelector('.chevron');
-  body.classList.toggle('open');
-  chevron.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+  header.querySelector('.chevron').classList.toggle('open');
 }
 function swapTab(btn, mealId, option) {
-  const parent = btn.closest('.meal-body');
-  parent.querySelectorAll('.swap-tab').forEach(t => t.classList.remove('active'));
-  parent.querySelectorAll('.swap-panel').forEach(p => p.classList.remove('active'));
+  var parent = btn.closest('.meal-body');
+  parent.querySelectorAll('.swap-tab').forEach(function(t){ t.classList.remove('active'); });
+  parent.querySelectorAll('.swap-panel').forEach(function(p){ p.classList.remove('active'); });
   btn.classList.add('active');
   document.getElementById(mealId + '-' + option).classList.add('active');
 }
 
-/* ---- Lift Tracker ---- */
-var sessions = JSON.parse(localStorage.getItem('liftSessions') || '[]');
-
-document.addEventListener('DOMContentLoaded', function() {
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('session-date').value = today;
-  renderLog();
-});
-
 function addRow() {
   var row = document.createElement('div');
   row.className = 'tracker-row-inputs';
-  row.innerHTML = '<input type="text" placeholder="e.g. Squat"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button>';
+  row.innerHTML = '<input type="text" placeholder="e.g. Squat"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)">✕</button>';
   document.getElementById('set-rows').appendChild(row);
 }
-
 function removeRow(btn) {
   var rows = document.querySelectorAll('#set-rows .tracker-row-inputs');
   if (rows.length > 1) btn.closest('.tracker-row-inputs').remove();
-  else { btn.closest('.tracker-row-inputs').querySelectorAll('input').forEach(function(i){ i.value=''; }); }
+  else btn.closest('.tracker-row-inputs').querySelectorAll('input').forEach(function(i){ i.value=''; });
 }
-
 function saveSession() {
-  var name = document.getElementById('session-name').value.trim() || 'Session';
+  var type = document.getElementById('session-type').value;
   var date = document.getElementById('session-date').value || new Date().toISOString().split('T')[0];
   var rows = document.querySelectorAll('#set-rows .tracker-row-inputs');
   var exercises = [];
@@ -573,8 +573,7 @@ function saveSession() {
     if (ex) exercises.push({ exercise: ex, weight: kg || '—', reps: reps || '—' });
   });
   if (!exercises.length) { alert('Please add at least one exercise.'); return; }
-  var session = { id: Date.now(), name: name, date: date, exercises: exercises };
-  sessions.unshift(session);
+  sessions.unshift({ id: Date.now(), type: type, date: date, exercises: exercises });
   localStorage.setItem('liftSessions', JSON.stringify(sessions));
   clearForm();
   renderLog();
@@ -582,69 +581,63 @@ function saveSession() {
   msg.style.display = 'block';
   setTimeout(function(){ msg.style.display = 'none'; }, 2500);
 }
-
 function clearForm() {
-  document.getElementById('session-name').value = '';
   document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
-  var container = document.getElementById('set-rows');
-  container.innerHTML = '<div class="tracker-row-inputs"><input type="text" placeholder="e.g. Bench press"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)" title="Remove">✕</button></div>';
+  document.getElementById('set-rows').innerHTML = '<div class="tracker-row-inputs"><input type="text" placeholder="e.g. Bench press"><input type="number" placeholder="80" min="0"><input type="number" placeholder="6" min="0"><button class="btn-remove" onclick="removeRow(this)">✕</button></div>';
 }
-
 function deleteSession(id) {
   sessions = sessions.filter(function(s){ return s.id !== id; });
   localStorage.setItem('liftSessions', JSON.stringify(sessions));
   renderLog();
 }
 
-function getPR(exerciseName) {
-  var maxWeight = 0;
+function isPR(exercise, weight, sessionId, sessionType) {
+  var w = parseFloat(weight);
+  if (isNaN(w) || w <= 0) return false;
+  var best = 0;
   sessions.forEach(function(s) {
+    if (s.id === sessionId) return;
     s.exercises.forEach(function(e) {
-      if (e.exercise.toLowerCase() === exerciseName.toLowerCase()) {
-        var w = parseFloat(e.weight);
-        if (!isNaN(w) && w > maxWeight) maxWeight = w;
+      if (e.exercise.toLowerCase() === exercise.toLowerCase()) {
+        var ew = parseFloat(e.weight);
+        if (!isNaN(ew) && ew > best) best = ew;
       }
     });
   });
-  return maxWeight;
+  return w > best;
 }
 
 function renderLog() {
   var list = document.getElementById('log-list');
-  var empty = document.getElementById('empty-state');
-  var count = document.getElementById('log-count');
-  count.textContent = sessions.length ? sessions.length + ' session' + (sessions.length > 1 ? 's' : '') : '';
-  if (!sessions.length) {
-    list.innerHTML = '';
-    list.appendChild(empty);
+  var totalSessions = sessions.length;
+  if (!totalSessions) {
+    list.innerHTML = '<div class="no-sessions-msg">No sessions logged yet. Save your first session above.</div>';
     return;
   }
   list.innerHTML = '';
-  sessions.forEach(function(s) {
-    var d = new Date(s.date + 'T12:00:00');
-    var dateStr = d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-    var rows = s.exercises.map(function(e) {
-      var isPR = false;
-      var w = parseFloat(e.weight);
-      if (!isNaN(w) && w > 0) {
-        var pr = 0;
-        sessions.forEach(function(ss) {
-          if (ss.id === s.id) return;
-          ss.exercises.forEach(function(ex) {
-            if (ex.exercise.toLowerCase() === e.exercise.toLowerCase()) {
-              var ew = parseFloat(ex.weight);
-              if (!isNaN(ew) && ew > pr) pr = ew;
-            }
-          });
-        });
-        if (w > pr && pr >= 0) isPR = true;
-      }
-      return '<tr><td>' + e.exercise + (isPR ? '<span class="pr-badge">PR</span>' : '') + '</td><td>' + e.weight + ' kg</td><td>' + e.reps + ' reps</td></tr>';
-    }).join('');
-    var card = document.createElement('div');
-    card.className = 'log-entry';
-    card.innerHTML = '<div class="log-entry-header"><div class="log-meta"><div class="log-date">' + dateStr + '</div><div class="log-session">' + s.name + '</div></div><button class="btn-delete-log" onclick="deleteSession(' + s.id + ')">Delete</button></div><table class="log-table"><thead><tr><th>Exercise</th><th>Weight</th><th>Reps</th></tr></thead><tbody>' + rows + '</tbody></table>';
-    list.appendChild(card);
+  SESSION_TYPES.forEach(function(type) {
+    var typeSessions = sessions.filter(function(s){ return s.type === type; });
+    var tag = TYPE_TAGS[type] || { bg:'#f3f2ec', color:'#555' };
+    var block = document.createElement('div');
+    block.className = 'session-type-block';
+    var headerHTML = '<div class="session-type-header"><div><span class="session-type-label">' + type + '</span><span class="session-type-tag" style="background:' + tag.bg + ';color:' + tag.color + '">' + (typeSessions.length) + ' session' + (typeSessions.length !== 1 ? 's' : '') + '</span></div></div>';
+    var trackHTML = '<div class="scroll-track">';
+    if (!typeSessions.length) {
+      trackHTML += '<div class="empty-state">No ' + type + ' sessions yet</div>';
+    } else {
+      typeSessions.forEach(function(s) {
+        var d = new Date(s.date + 'T12:00:00');
+        var dateStr = d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+        var rows = s.exercises.map(function(e) {
+          var pr = isPR(e.exercise, e.weight, s.id, s.type);
+          return '<tr><td>' + e.exercise + (pr ? '<span class="pr-badge">PR</span>' : '') + '</td><td>' + e.weight + 'kg</td><td>' + e.reps + ' reps</td></tr>';
+        }).join('');
+        trackHTML += '<div class="session-card"><button class="btn-delete-card" onclick="deleteSession(' + s.id + ')">✕</button><div class="session-card-date">' + dateStr + '</div><div class="session-card-name">' + s.type + '</div><table class="sc-table"><thead><tr><th>Exercise</th><th>Wt</th><th>Reps</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      });
+    }
+    trackHTML += '</div>';
+    block.innerHTML = headerHTML + trackHTML;
+    list.appendChild(block);
   });
 }
 </script>
